@@ -14,7 +14,7 @@ interface Props {
 
 export default function TopBar({ filter, recentlyMode, onFilterChange, onRecentlyToggle }: Props) {
   return (
-    <header className="flex items-center justify-between gap-2 px-3 py-2 bg-slate-900/95 backdrop-blur border-b border-slate-700 safe-top z-20 shrink-0">
+    <header className="flex items-center justify-between gap-2 px-3 py-2 pt-[max(env(safe-area-inset-top),8px)] bg-slate-900/95 backdrop-blur border-b border-slate-700 z-20 shrink-0">
       {/* Title */}
       <div className="flex items-center gap-2 min-w-0">
         <svg viewBox="0 0 24 24" className="w-6 h-6 text-emerald-400 shrink-0" fill="currentColor">

@@ -169,7 +169,7 @@ export default function HomePage() {
   const showReport = !recentlyMode && !showReportForm && !selectedSighting;
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-slate-900">
+    <div className="fixed inset-0 flex flex-col overflow-hidden bg-slate-900 pb-[max(env(safe-area-inset-bottom),0px)]">
       {/* Top bar */}
       <TopBar
         filter={filter}
