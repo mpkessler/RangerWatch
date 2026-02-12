@@ -51,7 +51,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
       </head>
-      <body className="bg-slate-900 text-white antialiased">{children}</body>
+      <body className="bg-slate-900 text-white antialiased">
+        <div className="pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] min-h-screen">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
