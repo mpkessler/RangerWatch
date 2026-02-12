@@ -1,7 +1,7 @@
 // RangerWatch Service Worker
 // Strategy: cache-first for shell/static assets; network-only for API
 
-const CACHE_VERSION = 'rw-v1';
+const CACHE_VERSION = 'rw-v2';
 const SHELL_ASSETS = [
   '/',
   '/manifest.json',

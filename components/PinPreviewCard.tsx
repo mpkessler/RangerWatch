@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Sighting, DeviceInfo, CheckinResult } from '@/lib/types';
 import { TAG_TEXT, formatRelativeTime, isWithin90Minutes } from '@/lib/utils';
 
@@ -15,36 +15,8 @@ interface Props {
   onSightingUpdate: (updated: Partial<Sighting> & { id: string }) => void;
 }
 
-const CARD_W = 288; // matches w-72
-const CARD_H = 108; // compact card height
-const PIN_GAP = 18;  // px gap between pin centre and card edge
-const PAD = 8;       // min px from container edge
-
-function computeStyle(pos: PinPos | null | undefined): React.CSSProperties {
-  // Mobile / no position: bottom-centre, clamped to viewport
-  if (!pos || pos.containerW < 640) {
-    return {
-      bottom: 24,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      maxWidth: 'calc(100% - 16px)',
-    };
-  }
-
-  // Desktop: try above the pin, centred horizontally
-  let left = Math.round(pos.x - CARD_W / 2);
-  let top = Math.round(pos.y - CARD_H - PIN_GAP);
-
-  // Clamp horizontally
-  left = Math.max(PAD, Math.min(left, pos.containerW - CARD_W - PAD));
-
-  // If card would clip the top, show below instead
-  if (top < PAD) {
-    top = Math.round(pos.y + PIN_GAP);
-  }
-
-  return { left, top };
-}
+const PAD = 8;   // min px from container edge
+const GAP = 16;  // gap between pin centre and card edge
 
 export default function PinPreviewCard({
   sighting,
@@ -54,6 +26,11 @@ export default function PinPreviewCard({
   onDetails,
   onSightingUpdate,
 }: Props) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  // Start invisible; useLayoutEffect computes the correct position before
+  // the first browser paint, so the user never sees an incorrect placement.
+  const [posStyle, setPosStyle] = useState<React.CSSProperties>({ visibility: 'hidden' });
+
   const [checkingIn, setCheckingIn] = useState(false);
   const [checkinSuccess, setCheckinSuccess] = useState(false);
   const [localCheckinCount, setLocalCheckinCount] = useState(sighting.checkin_count);
@@ -63,6 +40,40 @@ export default function PinPreviewCard({
     setCheckinSuccess(false);
     setCheckingIn(false);
   }, [sighting.id, sighting.checkin_count]);
+
+  // Compute clamped position using actual rendered card dimensions
+  useLayoutEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    const { width: cardW, height: cardH } = el.getBoundingClientRect();
+    const pos = pinScreenPos;
+
+    if (!pos) {
+      // No position data yet: safe bottom-centre fallback
+      setPosStyle({
+        bottom: PAD * 3,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        visibility: 'visible',
+      });
+      return;
+    }
+
+    const { x: pinX, y: pinY, containerW, containerH } = pos;
+
+    // Horizontal: centre on pin, clamped to container edges
+    let left = Math.round(pinX - cardW / 2);
+    left = Math.max(PAD, Math.min(left, containerW - cardW - PAD));
+
+    // Vertical: prefer above pin; flip below if top clips; clamp to container
+    let top = pinY - cardH - GAP;
+    if (top < PAD) top = pinY + GAP;          // flip to below
+    top = Math.min(top, containerH - cardH - PAD); // clamp bottom
+    top = Math.max(PAD, top);                  // safety clamp top
+
+    setPosStyle({ left, top: Math.round(top), visibility: 'visible' });
+  }, [pinScreenPos]);
 
   const canCheckin = isWithin90Minutes(sighting.created_at);
 
@@ -99,11 +110,9 @@ export default function PinPreviewCard({
 
   return (
     <div
+      ref={cardRef}
       className="absolute z-30 w-72 pointer-events-auto"
-      style={{
-        ...computeStyle(pinScreenPos),
-        animation: 'slideUpFade 200ms cubic-bezier(0.32,0.72,0,1) both',
-      }}
+      style={{ ...posStyle, animation: 'slideUpFade 200ms cubic-bezier(0.32,0.72,0,1) both' }}
     >
       <div className="bg-slate-900/95 backdrop-blur-sm rounded-2xl border border-slate-700 shadow-2xl px-3 pt-3 pb-3">
         {/* Header */}

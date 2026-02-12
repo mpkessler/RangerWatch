@@ -185,7 +185,17 @@ export default function MapView({
         if (!e.features?.length) return;
         const props = e.features[0].properties as { id: string };
         const found = sightingsRef.current.find((s) => s.id === props.id);
-        if (found) onSightingSelectRef.current(found);
+        if (!found) return;
+        // Project screen position BEFORE calling onSightingSelect so React 18
+        // batches both state updates into one render — card mounts with position
+        // already set, preventing a bottom-center → near-pin jump.
+        const pt = map.project([found.lng, found.lat]);
+        const canvas = map.getCanvas();
+        onSightingProjectedRef.current?.({
+          x: pt.x, y: pt.y,
+          containerW: canvas.offsetWidth, containerH: canvas.offsetHeight,
+        });
+        onSightingSelectRef.current(found);
       });
 
       // Click on cluster → zoom in

@@ -216,6 +216,7 @@ export default function HomePage() {
         {/* Compact preview card (tap pin → preview) */}
         {selectedSighting && !showDetailSheet && (
           <PinPreviewCard
+            key={selectedSighting.id}
             sighting={selectedSighting}
             device={device}
             pinScreenPos={pinScreenPos}
