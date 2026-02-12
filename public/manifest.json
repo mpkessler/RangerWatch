@@ -1,0 +1,19 @@
+{
+  "name": "RangerWatch",
+  "short_name": "RangerWatch",
+  "description": "Anonymously report park ranger sightings in your area.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "categories": ["utilities", "navigation"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

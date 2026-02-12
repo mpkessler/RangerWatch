@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Remove tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Full-height app shell */
+html,
+body,
+#__next {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+/* Bottom sheet transition */
+.sheet-enter {
+  transform: translateY(100%);
+}
+.sheet-enter-active {
+  transform: translateY(0);
+  transition: transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Map cursor in drop mode */
+.map-drop-mode {
+  cursor: crosshair !important;
+}
+
+/* Slide-up animation for bottom sheets and banners */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes slideUpFade {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <!-- Background -->
+  <rect width="192" height="192" rx="40" fill="#0f172a"/>
+  <!-- Location pin (outer) -->
+  <path d="M96 28c-24.3 0-44 19.7-44 44 0 33 44 92 44 92s44-59 44-92c0-24.3-19.7-44-44-44z" fill="#34d399"/>
+  <!-- Location pin (inner dot) -->
+  <circle cx="96" cy="72" r="16" fill="#0f172a"/>
+  <!-- Eye / watch detail -->
+  <circle cx="96" cy="72" r="7" fill="#34d399"/>
+</svg>
