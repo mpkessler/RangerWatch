@@ -65,12 +65,14 @@ export function isOlderThan24h(created_at: string): boolean {
 export function formatRelativeTime(created_at: string): string {
   const diff = Date.now() - new Date(created_at).getTime();
   const minutes = Math.floor(diff / 60_000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
   if (minutes < 1) return 'just now';
   if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return `${days}d ago`;
+  if (minutes < 90) return `${Math.floor(minutes / 60)}h ago`;
+  // ≥ 90 min: absolute timestamp
+  const d = new Date(created_at);
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const date = `${d.getMonth() + 1}/${d.getDate()}`;
+  return `Reported at ${time} on ${date}`;
 }
 
 export function formatExactTime(created_at: string): string {

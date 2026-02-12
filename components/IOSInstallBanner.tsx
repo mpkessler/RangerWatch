@@ -28,7 +28,7 @@ export default function IOSInstallBanner() {
   return (
     <div
       role="banner"
-      className="absolute bottom-20 left-3 right-3 z-40 bg-slate-800 border border-slate-600 rounded-2xl px-4 py-3 shadow-2xl flex items-start gap-3"
+      className="bg-slate-800 border-b border-slate-700 px-4 py-2.5 flex items-center gap-3 z-40 shrink-0"
       style={{ animation: 'slideUpFade 300ms cubic-bezier(0.32,0.72,0,1) both' }}
     >
       <svg viewBox="0 0 24 24" className="w-8 h-8 text-emerald-400 shrink-0 mt-0.5" fill="currentColor">

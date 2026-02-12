@@ -178,6 +178,9 @@ export default function HomePage() {
         onRecentlyToggle={toggleRecentlyMode}
       />
 
+      {/* iOS install banner — below nav, above map */}
+      <IOSInstallBanner />
+
       {/* Recently list drawer */}
       {recentlyMode && (
         <RecentlyList
@@ -209,9 +212,6 @@ export default function HomePage() {
             onCancelReport={cancelReportMode}
           />
         )}
-
-        {/* iOS install banner */}
-        <IOSInstallBanner />
 
         {/* Compact preview card (tap pin → preview) */}
         {selectedSighting && !showDetailSheet && (

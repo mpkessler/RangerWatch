@@ -216,6 +216,13 @@ export default function MapView({
       map.on('mouseleave', 'pins', () => { if (!reportModeRef.current) map.getCanvas().style.cursor = ''; });
       map.on('mouseenter', 'clusters', () => { if (!reportModeRef.current) map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'clusters', () => { if (!reportModeRef.current) map.getCanvas().style.cursor = ''; });
+
+      // Safety-net: re-apply sightings data once map is fully loaded.
+      // Handles the race where data arrived before style.load completed.
+      if (sightingsRef.current.length > 0) {
+        const src = map.getSource('sightings') as maplibregl.GeoJSONSource | undefined;
+        if (src) src.setData(sightingsToGeoJSON(sightingsRef.current));
+      }
     });
 
     mapRef.current = map;
@@ -243,14 +250,19 @@ export default function MapView({
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    const update = () => {
-      const src = map.getSource('sightings') as maplibregl.GeoJSONSource | undefined;
-      if (src) src.setData(sightingsToGeoJSON(sightings));
-    };
-    if (map.isStyleLoaded()) {
-      update();
+    // Check source existence directly — more reliable than isStyleLoaded(),
+    // which can transiently return false after style.load has already fired.
+    const src = map.getSource('sightings') as maplibregl.GeoJSONSource | undefined;
+    if (src) {
+      src.setData(sightingsToGeoJSON(sightings));
     } else {
+      // Source not yet added; wait for style.load then sync
+      const update = () => {
+        (map.getSource('sightings') as maplibregl.GeoJSONSource | undefined)
+          ?.setData(sightingsToGeoJSON(sightings));
+      };
       map.once('style.load', update);
+      return () => { map.off('style.load', update); };
     }
   }, [sightings]);
 
