@@ -3,6 +3,8 @@ import { createServerClient } from '@/lib/supabase-server';
 import { formatExactTime } from '@/lib/utils';
 import DeleteButton from './DeleteButton';
 
+export const dynamic = 'force-dynamic';
+
 interface AdminSighting {
   id: string;
   created_at: string;
