@@ -6,6 +6,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Analytics } from "@vercel/analytics/next"
+import AnalyticsTracker from '@/components/AnalyticsTracker';
 
 
 export const metadata: Metadata = {
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-slate-900 text-white antialiased">
         {children}
         <Analytics />
+        <AnalyticsTracker />
       </body>
     </html>
   );

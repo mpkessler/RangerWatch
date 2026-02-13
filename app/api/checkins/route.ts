@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { track } from '@vercel/analytics/server';
 import { createServerClient } from '@/lib/supabase-server';
 import type { CheckinResult } from '@/lib/types';
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     // ── Sighting must exist and not be deleted ──────────────────
     const { data: sighting, error: sErr } = await supabase
       .from('sightings')
-      .select('id, created_at')
+      .select('id, created_at, tag')
       .eq('id', sighting_id)
       .eq('is_deleted', false)
       .single();
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
 
     if (iErr) {
       console.error('Insert checkin error:', iErr);
+      await track('CheckInError', { tag: sighting.tag as string });
       return NextResponse.json({ error: 'Failed to check in' }, { status: 500 });
     }
 
@@ -97,6 +99,7 @@ export async function POST(req: NextRequest) {
       last_checkin_at: lastRow?.created_at ?? null,
     };
 
+    await track('CheckIn', { tag: sighting.tag as string });
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
     console.error('/api/checkins POST error:', err);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { track } from '@vercel/analytics';
 import type { Sighting, DeviceInfo, CheckinResult } from '@/lib/types';
 import {
   TAG_TEXT,
@@ -30,6 +31,8 @@ export default function PinDetailSheet({
   const [localCheckinCount, setLocalCheckinCount] = useState(sighting.checkin_count);
   const [localLastCheckin, setLocalLastCheckin] = useState(sighting.last_checkin_at);
   const sheetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { track('OpenDetails', { tag: sighting.tag ?? 'unknown' }); }, [sighting.id]);
 
   // Sync when sighting prop changes (e.g. after a refresh)
   useEffect(() => {

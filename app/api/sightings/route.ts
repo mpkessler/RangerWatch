@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { track } from '@vercel/analytics/server';
 import { createServerClient } from '@/lib/supabase-server';
 import { isValidLatLng, isValidTag, FILTER_INTERVAL } from '@/lib/utils';
 import type { FilterRange, Sighting } from '@/lib/types';
@@ -179,10 +180,12 @@ export async function POST(req: NextRequest) {
 
     if (iErr || !created) {
       console.error('Insert sighting error:', iErr);
+      await track('SubmitReportError', { tag });
       return NextResponse.json({ error: 'Failed to create sighting' }, { status: 500 });
     }
 
     const result: Sighting = { ...created, checkin_count: 0, last_checkin_at: null };
+    await track('PinPlaced', { tag, hasMedia: !!media_url });
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
     console.error('/api/sightings POST error:', err);

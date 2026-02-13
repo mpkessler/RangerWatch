@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { track } from '@vercel/analytics';
 import type { DeviceInfo, Sighting, Tag } from '@/lib/types';
 import { VALID_TAGS, TAG_TEXT } from '@/lib/utils';
 import { supabaseClient } from '@/lib/supabase-client';
@@ -24,6 +25,13 @@ export default function ReportForm({ location, device, onSuccess, onCancel }: Pr
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { track('ReportModalOpen'); }, []);
+
+  function handleCancel() {
+    track('ReportModalClose');
+    onCancel();
+  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -118,7 +126,7 @@ export default function ReportForm({ location, device, onSuccess, onCancel }: Pr
   return (
     <div className="absolute inset-0 z-30 flex flex-col justify-end pointer-events-none">
       {/* Scrim */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-auto" onClick={onCancel} />
+      <div className="absolute inset-0 bg-black/40 pointer-events-auto" onClick={handleCancel} />
 
       {/* Sheet */}
       <div
@@ -133,7 +141,7 @@ export default function ReportForm({ location, device, onSuccess, onCancel }: Pr
         {/* Header */}
         <div className="flex items-center justify-between px-4 pb-3 shrink-0 border-b border-slate-800">
           <h2 className="font-semibold text-white">New Sighting Report</h2>
-          <button onClick={onCancel} className="text-slate-400 hover:text-white p-1" aria-label="Cancel">
+          <button onClick={handleCancel} className="text-slate-400 hover:text-white p-1" aria-label="Cancel">
             <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
