@@ -53,7 +53,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
       </head>
-      <body className="bg-slate-900 text-white antialiased">{children}</body>
+      <body className="bg-slate-900 text-white antialiased">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
